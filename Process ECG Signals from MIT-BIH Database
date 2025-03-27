@@ -1,0 +1,25 @@
+import wfdb
+import numpy as np
+import matplotlib.pyplot as plt
+from biosppy.signals import ecg
+
+# Load ECG signal from MIT-BIH dataset
+record = wfdb.rdsamp('mitdb/100', sampto=1000)  # Read first 1000 samples
+ecg_signal = record[0][:, 0]  # Extract ECG lead
+
+# Process ECG signal using biosppy (Includes filtering & R-peak detection)
+out = ecg.ecg(signal=ecg_signal, sampling_rate=360, show=True)
+
+# Extract detected R-peaks
+r_peaks = out['rpeaks']
+
+# Plot R-peak detection
+plt.figure(figsize=(10, 4))
+plt.plot(ecg_signal, label="ECG Signal")
+plt.scatter(r_peaks, ecg_signal[r_peaks], color='red', label="R-peaks", zorder=2)
+plt.xlabel("Samples")
+plt.ylabel("Amplitude")
+plt.title("ECG Signal with R-Peak Detection")
+plt.legend()
+plt.grid()
+plt.show()
