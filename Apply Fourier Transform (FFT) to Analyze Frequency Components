@@ -1,0 +1,21 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.fftpack import fft, fftfreq
+
+# Generate a signal with multiple frequencies
+fs = 500  # Sampling frequency (Hz)
+t = np.linspace(0, 1, fs, endpoint=False)  # Time vector (1 sec)
+signal = np.sin(2 * np.pi * 50 * t) + 0.5 * np.sin(2 * np.pi * 120 * t)  # 50Hz + 120Hz components
+
+# Compute FFT
+fft_values = fft(signal)
+freqs = fftfreq(len(signal), 1/fs)
+
+# Plot frequency spectrum
+plt.figure(figsize=(10, 4))
+plt.plot(freqs[:fs//2], np.abs(fft_values[:fs//2]))  # Plot only positive frequencies
+plt.xlabel("Frequency (Hz)")
+plt.ylabel("Amplitude")
+plt.title("Frequency Spectrum using FFT")
+plt.grid()
+plt.show()
