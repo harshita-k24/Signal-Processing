@@ -1,0 +1,37 @@
+from scipy.signal import butter, filtfilt
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Butterworth Filter Function
+def butter_filter(signal, cutoff, fs, filter_type, order=4):
+    nyquist = 0.5 * fs
+    normal_cutoff = np.array(cutoff) / nyquist
+    b, a = butter(order, normal_cutoff, btype=filter_type, analog=False)
+    return filtfilt(b, a, signal)
+
+# Example Signal (ECG or Any Noisy Signal)
+fs = 360  # Sampling frequency (Hz)
+t = np.linspace(0, 5, fs * 5)  # 5 seconds duration
+signal = np.sin(2 * np.pi * 1 * t) + np.sin(2 * np.pi * 50 * t)  # 1Hz (ECG) + 50Hz noise
+
+# Apply Filters
+low_pass_filtered = butter_filter(signal, cutoff=40, fs=fs, filter_type="low")
+high_pass_filtered = butter_filter(signal, cutoff=0.5, fs=fs, filter_type="high")
+band_pass_filtered = butter_filter(signal, cutoff=[0.5, 40], fs=fs, filter_type="band")
+
+# Plot Filtered Signals
+plt.figure(figsize=(12, 6))
+plt.subplot(3, 1, 1)
+plt.plot(t, low_pass_filtered, label="Low-Pass Filter (0-40 Hz)", color='r')
+plt.legend()
+
+plt.subplot(3, 1, 2)
+plt.plot(t, high_pass_filtered, label="High-Pass Filter (0.5 Hz+)", color='g')
+plt.legend()
+
+plt.subplot(3, 1, 3)
+plt.plot(t, band_pass_filtered, label="Band-Pass Filter (0.5-40 Hz)", color='b')
+plt.legend()
+
+plt.xlabel("Time (s)")
+plt.show()
